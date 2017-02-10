@@ -56,6 +56,7 @@ import demos.util.*;
 
 /** Shows how to place 2D text in 3D using the TextRenderer. */
 
+
 public class JOGLTextCubeDemo extends Demo {
   private float xAng;
   private float yAng;
@@ -64,6 +65,55 @@ public class JOGLTextCubeDemo extends Demo {
   private TextRenderer renderer;
   private FPSCounter fps;
   private float textScaleFactor;
+  
+public static class drawingTranslations
+  {
+    public float x; 
+    public float y;  
+    public float z; 
+    
+    public drawingTranslations(float x, float y, float z)
+    {
+        this.x = x;
+        this.y= y;
+        this.z= z;
+    }
+  };
+static drawingTranslations[] dTranslation = { 
+        //first face------------------------------
+        new drawingTranslations( 0,0,0 ),
+        new drawingTranslations( 1.1f,0,0),
+        new drawingTranslations( 1.1f,0,0 ),
+        new drawingTranslations( 0,1.1f,0),
+        new drawingTranslations( -1.1f,0,0 ),
+        new drawingTranslations( -1.1f,0,0),
+        new drawingTranslations( 0,1.1f,0 ),
+        new drawingTranslations( 1.1f,0,0),
+        new drawingTranslations( 1.1f,0,0),
+        //second face----------------------------
+        new drawingTranslations( 0,0,1.1f ),
+        new drawingTranslations( -1.1f,0,0),
+        new drawingTranslations( -1.1f,0,0 ),
+        new drawingTranslations( 0,-1.1f,0),
+        new drawingTranslations( 1.1f,0,0 ),
+        new drawingTranslations( 1.1f,0,0),
+        new drawingTranslations( 0,-1.1f,0 ),
+        new drawingTranslations( -1.1f,0,0),
+        new drawingTranslations( -1.1f,0,0),
+        //third face-----------------------------
+        new drawingTranslations( 0,0,1.1f ),
+        new drawingTranslations( 1.1f,0,0),
+        new drawingTranslations( 1.1f,0,0 ),
+        new drawingTranslations( 0,1.1f,0),
+        new drawingTranslations( -1.1f,0,0 ),
+        new drawingTranslations( -1.1f,0,0),
+        new drawingTranslations( 0,1.1f,0 ),
+        new drawingTranslations( 1.1f,0,0),
+        new drawingTranslations( 1.1f,0,0),
+    };
+
+  
+  public static drawingTranslations [] dTranslations;
 
   public static void main(String[] args) {
     Frame frame = new Frame("Text Cube");
@@ -76,6 +126,7 @@ public class JOGLTextCubeDemo extends Demo {
     frame.add(canvas, BorderLayout.CENTER);
 
     frame.setSize(1024, 1024);
+    
     final Animator animator = new Animator(canvas);
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
@@ -110,270 +161,69 @@ public class JOGLTextCubeDemo extends Demo {
     time = new SystemTime();
     ((SystemTime) time).rebase();
     gl.setSwapInterval(0);
+    
+    
   }
 
   public void display(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
+    
+    //gl.glMatrixMode(GL.GL_MODELVIEW);
+    //gl.glLoadIdentity();
+    //glu.gluLookAt(40, 60, 100,
+    //              0, 0, 0,
+    //              0, 1, 0);
+    //glu.gluPerspective(45, 1, -5, 100);
+    
+    gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glLoadIdentity();
+    glu.gluPerspective(60,1,0.5,50);
     gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glLoadIdentity();
-    glu.gluLookAt(0, 0, -10,
-                  0, 0, 0,
-                  0, 1, 0);
-    glu.gluPerspective(45, 1, -5, 10);
+    glu.gluLookAt(4,6,10, 0,0,0, 0,1,0);
+    
+    // Base translation of cube
+    //gl.glTranslatef(0,0,-50);
     
     // Base rotation of cube
     gl.glRotatef(xAng, 1, 0, 0);
     gl.glRotatef(yAng, 0, 1, 0);
-    gl.glTranslatef(0,0,-15);
 
-    // Six faces of he other cube
-    // Top face  
-    gl.glPushMatrix();
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
-
-    // Six faces of cube2
-    // Top face
-    gl.glPushMatrix();
-    gl.glTranslatef(1.1f, 0, 0);
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    gl.glTranslatef(1.1f, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
-    
-    // Six faces of cube3
-    // Top face
-    gl.glPushMatrix();
-    gl.glTranslatef(1.1f, 0, 0);
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    gl.glTranslatef(1.1f, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
-    //-------------------------------------------------------------------------------------
-    
-    gl.glTranslatef(-2.2f, 1.1f,0);
-    // Six faces of he other cube
-    // Top face  
-    gl.glPushMatrix();
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
-
-    // Six faces of cube2
-    // Top face
-    gl.glPushMatrix();
-    gl.glTranslatef(1.1f, 0, 0);
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    gl.glTranslatef(1.1f, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
-    
-    // Six faces of cube3
-    // Top face
-    gl.glPushMatrix();
-    gl.glTranslatef(1.1f, 0, 0);
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    gl.glTranslatef(1.1f, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
-    //------------------------------------------------------------------------------------
-    
-    gl.glTranslatef(-2.2f, 1.1f,0);
-    // Six faces of he other cube
-    // Top face  
-    gl.glPushMatrix();
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
-
-    // Six faces of cube2
-    // Top face
-    gl.glPushMatrix();
-    gl.glTranslatef(1.1f, 0, 0);
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    gl.glTranslatef(1.1f, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
-    
-    // Six faces of cube3
-    // Top face
-    gl.glPushMatrix();
-    gl.glTranslatef(1.1f, 0, 0);
-    gl.glRotatef(-90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
-    gl.glPopMatrix();
-    // Front face
-    gl.glTranslatef(1.1f, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
-    // Right face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
-    // Back face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
-    // Left face    
-    gl.glRotatef(90, 0, 1, 0);
-    drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
-    gl.glPopMatrix();
-    // Bottom face
-    gl.glPushMatrix();
-    gl.glRotatef(90, 1, 0, 0);
-    drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
-    gl.glPopMatrix();
+    for (int i = 0; i < 27; i++)
+    {
+        gl.glTranslatef(dTranslation[i].x, dTranslation[i].y,dTranslation[i].z);
+        // Six faces of cube2
+        // Top face  
+        gl.glPushMatrix();
+        gl.glRotatef(-90, 1, 0, 0);
+        drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
+        gl.glPopMatrix();
+        // Front face
+        drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
+        // Right face
+        gl.glPushMatrix();
+        gl.glRotatef(90, 0, 1, 0);
+        drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
+        // Back face    
+        gl.glRotatef(90, 0, 1, 0);
+        drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
+        // Left face    
+        gl.glRotatef(90, 0, 1, 0);
+        drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
+        gl.glPopMatrix();
+        // Bottom face
+        gl.glPushMatrix();
+        gl.glRotatef(90, 1, 0, 0);
+        drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
+        gl.glPopMatrix();
+    }
     
     fps.draw();
 
     time.update();
-    //xAng += 50 * (float) time.deltaT();
-    //yAng += 45 * (float) time.deltaT();
+    xAng += 50 * (float) time.deltaT();
+    yAng += 40 * (float) time.deltaT();
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
