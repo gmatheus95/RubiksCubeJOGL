@@ -38,7 +38,7 @@ public class JOGLTextCubeDemo extends JFrame implements GLEventListener, KeyList
   private Point pickPoint = new Point();
   private boolean mousePressed = false;
   private int pontos;
-  private int level = 0;
+  private int level = 1;
   Random rand = new Random();
   private int[] seq = new int[100];
   
@@ -140,17 +140,19 @@ static drawingTranslations[] dTranslation = {
     ((SystemTime) time).rebase();
     gl.setSwapInterval(0);
     
+    // Gerando sequencia de jogo
+    seq[0] = 0;
+    if(level < 100){
+        seq[level] = rand.nextInt(7 - 0 + 1) + 0; 
+        level += 1;
+    }
+    level = 0;
   }
 
   public void display(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-    
-    //if(level < 100)
-    //seq[level] = rand.nextInt(7 - 0 + 1) + 0; 
-    //level += 1;
-    
-    
+        
     // Texto
     TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 15));
     textRenderer.beginRendering(900, 700);
@@ -210,40 +212,40 @@ static drawingTranslations[] dTranslation = {
         // Top face  
         gl.glPushMatrix();
         gl.glRotatef(-90, 1, 0, 0);
-        if(mousePressed)
+        if(seq[level] == 3)
             drawFace(gl, 1.0f, 0.2f, 0.2f, 1.0f, "DBlue");
         else
             drawFace(gl, 1.0f, 0.4f, 0.4f, 0.8f, "DBlue");
         gl.glPopMatrix();
         // Front face
-        if(mousePressed)
+        if(seq[level] == 2)
             drawFace(gl, 1.0f, 1.0f, 0.2f, 0.2f, "Red");
         else
             drawFace(gl, 1.0f, 0.8f, 0.4f, 0.4f, "Red");
         // Right face
         gl.glPushMatrix();
         gl.glRotatef(90, 0, 1, 0);
-        if(mousePressed)
+        if(seq[level] == 4)
             drawFace(gl, 1.0f, 0.2f, 1.0f, 0.2f, "Green");
         else
             drawFace(gl, 1.0f, 0.4f, 0.7f, 0.4f, "Green");
         // Back face    
         gl.glRotatef(90, 0, 1, 0);
-        if(mousePressed)
+        if(seq[level] == 1)
             drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Yellow");
         else
             drawFace(gl, 1.0f, 0.7f, 0.7f, 0.4f, "Yellow");
         // Left face    
         gl.glRotatef(90, 0, 1, 0);
-        if(mousePressed)
+        if(seq[level] == 6)
             drawFace(gl, 1.0f, 1.0f, 1.0f, 1.0f, "White");
         else
-            drawFace(gl, 1.0f, 0.65f, 0.65f, 0.65f, "White");
+            drawFace(gl, 1.0f, 0.65f, 0.65f, 0.65f,"White");
         gl.glPopMatrix();
         // Bottom face
         gl.glPushMatrix();
         gl.glRotatef(90, 1, 0, 0);
-        if(mousePressed)
+        if(seq[level] == 5)
             drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Pink");  
         else
             drawFace(gl, 1.0f, 0.8f, 0.5f, 0.8f, "Pink");
