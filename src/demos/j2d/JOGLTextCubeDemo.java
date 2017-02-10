@@ -20,9 +20,13 @@ import demos.common.*;
 import demos.util.*;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.swing.JFrame;
+import sun.audio.AudioStream;
+import sun.audio.*;
+import java.io.*;
 
 /** Shows how to place 2D text in 3D using the TextRenderer. */
 
@@ -90,8 +94,10 @@ static drawingTranslations[] dTranslation = {
 
   
   public static drawingTranslations [] dTranslations;
-
-  public static void main(String[] args) {
+  public static String gongFile;
+  public static AudioStream audioStream;
+  
+  public static void main(String[] args) throws Exception{
     Frame frame = new Frame("Text Cube");
     frame.setLayout(new BorderLayout());
 
@@ -104,6 +110,11 @@ static drawingTranslations[] dTranslation = {
     canvas.addMouseListener(demo);
 
     frame.setSize(1024, 1024);
+    
+    gongFile = "vitao.wav";
+    // create an audiostream from the inputstream
+
+    // play the audio clip with the audioplayer class
     
     final Animator animator = new Animator(canvas);
     frame.addWindowListener(new WindowAdapter() {
@@ -149,7 +160,7 @@ static drawingTranslations[] dTranslation = {
     level = 0;
   }
 
-  public void display(GLAutoDrawable drawable) {
+  public void display(GLAutoDrawable drawable){
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         
@@ -213,7 +224,10 @@ static drawingTranslations[] dTranslation = {
         gl.glPushMatrix();
         gl.glRotatef(-90, 1, 0, 0);
         if(seq[level] == 3)
-            drawFace(gl, 1.0f, 0.2f, 0.2f, 1.0f, "DBlue");
+        {
+            drawFace(gl, 1.0f, 0.2f, 0.2f, 1.0f, "DBlue");           
+            
+        }
         else
             drawFace(gl, 1.0f, 0.4f, 0.4f, 0.8f, "DBlue");
         gl.glPopMatrix();
@@ -253,7 +267,7 @@ static drawingTranslations[] dTranslation = {
     }
     
     fps.draw();
-    if(mousePressed){
+    if(mousePressed){        
         double mouseX = MouseInfo.getPointerInfo().getLocation().getX();
         double mouseY = MouseInfo.getPointerInfo().getLocation().getY();
         yAng += 0.5f * ((float) +mouseX - pickPoint.x);
@@ -339,9 +353,16 @@ static drawingTranslations[] dTranslation = {
      //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void mousePressed(MouseEvent mouse) {
-        mousePressed = true;
+    public void mousePressed(MouseEvent mouse){
+        try{
+            audioStream = new AudioStream(new FileInputStream(gongFile));
+            AudioPlayer.player.start(audioStream);
+        }
+        catch(Exception ex)
+        {}
+        mousePressed = true;        
     }
+    
 
     public void mouseReleased(MouseEvent mouse) {
         mousePressed = false;
