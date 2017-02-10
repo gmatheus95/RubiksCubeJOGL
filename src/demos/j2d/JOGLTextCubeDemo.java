@@ -1,41 +1,3 @@
-/*
- * Copyright (c) 2007 Sun Microsystems, Inc. All Rights Reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- * 
- * - Redistribution of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
- * 
- * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any kind. ALL
- * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES,
- * INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A
- * PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED. SUN
- * MICROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL NOT BE LIABLE FOR
- * ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR
- * DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL SUN OR
- * ITS LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR
- * DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE
- * DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
- * ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, EVEN IF
- * SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * 
- * You acknowledge that this software is not designed or intended for use
- * in the design, construction, operation or maintenance of any nuclear
- * facility.
- * 
- * Sun gratefully acknowledges that this software was originally authored
- * and developed by Kenneth Bradley Russell and Christopher John Kline.
- */
 
 package demos.j2d;
 
@@ -53,11 +15,14 @@ import com.sun.opengl.util.j2d.*;
 
 import demos.common.*;
 import demos.util.*;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import javax.swing.JFrame;
 
 /** Shows how to place 2D text in 3D using the TextRenderer. */
 
 
-public class JOGLTextCubeDemo extends Demo {
+public class JOGLTextCubeDemo extends JFrame implements GLEventListener, KeyListener, MouseListener {
   private float xAng;
   private float yAng;
   private GLU glu = new GLU();
@@ -65,6 +30,8 @@ public class JOGLTextCubeDemo extends Demo {
   private TextRenderer renderer;
   private FPSCounter fps;
   private float textScaleFactor;
+  private Point pickPoint = new Point();
+  private boolean mousePressed = false;
   
 public static class drawingTranslations
   {
@@ -124,6 +91,8 @@ static drawingTranslations[] dTranslation = {
 
     canvas.addGLEventListener(demo);
     frame.add(canvas, BorderLayout.CENTER);
+    canvas.addKeyListener(demo);
+    canvas.addMouseListener(demo);
 
     frame.setSize(1024, 1024);
     
@@ -220,10 +189,17 @@ static drawingTranslations[] dTranslation = {
     }
     
     fps.draw();
-
+    if(mousePressed){
+        double mouseX = MouseInfo.getPointerInfo().getLocation().getX();
+        double mouseY = MouseInfo.getPointerInfo().getLocation().getY();
+        yAng += (float) +mouseX - pickPoint.x;
+        xAng += (float) +mouseY - pickPoint.y;
+    }
+    pickPoint.x = (int)MouseInfo.getPointerInfo().getLocation().getX();
+    pickPoint.y = (int)MouseInfo.getPointerInfo().getLocation().getY();  
     time.update();
-    xAng += 50 * (float) time.deltaT();
-    yAng += 40 * (float) time.deltaT();
+   // xAng += 50 * (float) time.deltaT();
+   // yAng += 40 * (float) time.deltaT();
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -274,4 +250,40 @@ static drawingTranslations[] dTranslation = {
                     textScaleFactor);
     renderer.end3DRendering();
   }
+  public void keyTyped(KeyEvent e) {
+    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void keyPressed(KeyEvent e) {
+    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void keyReleased(KeyEvent e) {
+    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void mouseClicked(MouseEvent e) {
+     //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void mousePressed(MouseEvent mouse) {
+        mousePressed = true;
+    }
+
+    public void mouseReleased(MouseEvent mouse) {
+        mousePressed = false;
+        
+    }
+
+    public void mouseEntered(MouseEvent mouse) {
+        if(mouse.getButton() == MouseEvent.BUTTON1){
+            pickPoint = mouse.getPoint();
+            System.out.println("x = " + pickPoint.x +" / y = " + pickPoint.y );
+            xAng += 1 * (float) -pickPoint.x + mouse.getX();
+            yAng += 1 * (float) -pickPoint.y + mouse.getY();
+        }
+    }
+    public void mouseExited(MouseEvent e) {
+      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
