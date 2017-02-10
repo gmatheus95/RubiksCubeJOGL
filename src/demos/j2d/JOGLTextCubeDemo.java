@@ -1,5 +1,6 @@
 package demos.j2d;
 
+import java.util.Random;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -37,6 +38,8 @@ public class JOGLTextCubeDemo extends JFrame implements GLEventListener, KeyList
   private Point pickPoint = new Point();
   private boolean mousePressed = false;
   private int pontos;
+  private int level = 0;
+  Random rand = new Random();
   private int[] seq = new int[100];
   
 public static class drawingTranslations
@@ -142,7 +145,12 @@ static drawingTranslations[] dTranslation = {
   public void display(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
+    
+    //if(level < 100)
+    //seq[level] = rand.nextInt(7 - 0 + 1) + 0; 
+    //level += 1;
+    
+    
     // Texto
     TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 15));
     textRenderer.beginRendering(900, 700);
@@ -202,25 +210,43 @@ static drawingTranslations[] dTranslation = {
         // Top face  
         gl.glPushMatrix();
         gl.glRotatef(-90, 1, 0, 0);
-        drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "DBlue");
+        if(mousePressed)
+            drawFace(gl, 1.0f, 0.2f, 0.2f, 1.0f, "DBlue");
+        else
+            drawFace(gl, 1.0f, 0.4f, 0.4f, 0.8f, "DBlue");
         gl.glPopMatrix();
         // Front face
-        drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Red");
+        if(mousePressed)
+            drawFace(gl, 1.0f, 1.0f, 0.2f, 0.2f, "Red");
+        else
+            drawFace(gl, 1.0f, 0.8f, 0.4f, 0.4f, "Red");
         // Right face
         gl.glPushMatrix();
         gl.glRotatef(90, 0, 1, 0);
-        drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Green");
+        if(mousePressed)
+            drawFace(gl, 1.0f, 0.2f, 1.0f, 0.2f, "Green");
+        else
+            drawFace(gl, 1.0f, 0.4f, 0.7f, 0.4f, "Green");
         // Back face    
         gl.glRotatef(90, 0, 1, 0);
-        drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Yellow");
+        if(mousePressed)
+            drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Yellow");
+        else
+            drawFace(gl, 1.0f, 0.7f, 0.7f, 0.4f, "Yellow");
         // Left face    
         gl.glRotatef(90, 0, 1, 0);
-        drawFace(gl, 1.0f, 1.0f, 1.0f, 1.0f, "White");
+        if(mousePressed)
+            drawFace(gl, 1.0f, 1.0f, 1.0f, 1.0f, "White");
+        else
+            drawFace(gl, 1.0f, 0.65f, 0.65f, 0.65f, "White");
         gl.glPopMatrix();
         // Bottom face
         gl.glPushMatrix();
         gl.glRotatef(90, 1, 0, 0);
-        drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Pink");
+        if(mousePressed)
+            drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Pink");  
+        else
+            drawFace(gl, 1.0f, 0.8f, 0.5f, 0.8f, "Pink");
         gl.glPopMatrix();
     }
     
@@ -228,8 +254,8 @@ static drawingTranslations[] dTranslation = {
     if(mousePressed){
         double mouseX = MouseInfo.getPointerInfo().getLocation().getX();
         double mouseY = MouseInfo.getPointerInfo().getLocation().getY();
-        yAng += (float) +mouseX - pickPoint.x;
-        xAng += (float) +mouseY - pickPoint.y;
+        yAng += 0.5f * ((float) +mouseX - pickPoint.x);
+        xAng += 0.5f * ((float) +mouseY - pickPoint.y);
     }
     pickPoint.x = (int)MouseInfo.getPointerInfo().getLocation().getX();
     pickPoint.y = (int)MouseInfo.getPointerInfo().getLocation().getY();  
