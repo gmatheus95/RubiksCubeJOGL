@@ -1,4 +1,3 @@
-
 package demos.j2d;
 
 import java.awt.BorderLayout;
@@ -12,11 +11,16 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.j2d.*;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureData;
+import com.sun.opengl.util.texture.TextureIO;
 
 import demos.common.*;
 import demos.util.*;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.swing.JFrame;
 
 /** Shows how to place 2D text in 3D using the TextRenderer. */
@@ -32,6 +36,8 @@ public class JOGLTextCubeDemo extends JFrame implements GLEventListener, KeyList
   private float textScaleFactor;
   private Point pickPoint = new Point();
   private boolean mousePressed = false;
+  private int pontos;
+  private int[] seq = new int[100];
   
 public static class drawingTranslations
   {
@@ -50,6 +56,16 @@ static drawingTranslations[] dTranslation = {
         //first face------------------------------
         new drawingTranslations( 0,0,0 ),
         new drawingTranslations( 1.1f,0,0),
+        new drawingTranslations( -2.2f,0,0 ),
+        new drawingTranslations( 0,1.1f,0),
+        new drawingTranslations( 1.1f,0,0 ),
+        new drawingTranslations( 1.1f,0,0),
+        new drawingTranslations( 0,-2.2f,0 ),
+        new drawingTranslations( -1.1f,0,0),
+        new drawingTranslations( -1.1f,0,0),
+        //second face----------------------------
+        new drawingTranslations( 0,0,1.1f ),
+        new drawingTranslations( 1.1f,0,0),
         new drawingTranslations( 1.1f,0,0 ),
         new drawingTranslations( 0,1.1f,0),
         new drawingTranslations( -1.1f,0,0 ),
@@ -57,8 +73,8 @@ static drawingTranslations[] dTranslation = {
         new drawingTranslations( 0,1.1f,0 ),
         new drawingTranslations( 1.1f,0,0),
         new drawingTranslations( 1.1f,0,0),
-        //second face----------------------------
-        new drawingTranslations( 0,0,1.1f ),
+        //third face-----------------------------
+        new drawingTranslations( 0,0,-2.2f ),
         new drawingTranslations( -1.1f,0,0),
         new drawingTranslations( -1.1f,0,0 ),
         new drawingTranslations( 0,-1.1f,0),
@@ -67,16 +83,6 @@ static drawingTranslations[] dTranslation = {
         new drawingTranslations( 0,-1.1f,0 ),
         new drawingTranslations( -1.1f,0,0),
         new drawingTranslations( -1.1f,0,0),
-        //third face-----------------------------
-        new drawingTranslations( 0,0,1.1f ),
-        new drawingTranslations( 1.1f,0,0),
-        new drawingTranslations( 1.1f,0,0 ),
-        new drawingTranslations( 0,1.1f,0),
-        new drawingTranslations( -1.1f,0,0 ),
-        new drawingTranslations( -1.1f,0,0),
-        new drawingTranslations( 0,1.1f,0 ),
-        new drawingTranslations( 1.1f,0,0),
-        new drawingTranslations( 1.1f,0,0),
     };
 
   
@@ -131,19 +137,53 @@ static drawingTranslations[] dTranslation = {
     ((SystemTime) time).rebase();
     gl.setSwapInterval(0);
     
-    
   }
 
   public void display(GLAutoDrawable drawable) {
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+    // Texto
+    TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 15));
+    textRenderer.beginRendering(900, 700);
+    // AMARELO
+    textRenderer.setColor(Color.YELLOW);
+    textRenderer.setSmoothing(true);
+    textRenderer.draw("Amarelo", (int) (30), (int) (50));
+    textRenderer.draw("1", (int) (65), (int) (30));
+    // Vermelho
+    textRenderer.setColor(Color.RED);
+    textRenderer.setSmoothing(true);
+    textRenderer.draw("Vermelho", (int) (105), (int) (50));
+    textRenderer.draw("2", (int) (145), (int) (30));
+    // Azul
+    textRenderer.setColor(Color.BLUE);
+    textRenderer.setSmoothing(true);
+    textRenderer.draw("Azul", (int) (190), (int) (50));
+    textRenderer.draw("3", (int) (205), (int) (30));
+    // Verde
+    textRenderer.setColor(Color.GREEN);
+    textRenderer.setSmoothing(true);
+    textRenderer.draw("Verde", (int) (235), (int) (50));
+    textRenderer.draw("4", (int) (255), (int) (30));
+    // Rosa
+    textRenderer.setColor(Color.PINK);
+    textRenderer.setSmoothing(true);
+    textRenderer.draw("Rosa", (int) (290), (int) (50));
+    textRenderer.draw("5", (int) (308), (int) (30));
+    // LBLUE
+    textRenderer.setColor(Color.WHITE);
+    textRenderer.setSmoothing(true);
+    textRenderer.draw("Branco", (int) (340), (int) (50));
+    textRenderer.draw("6", (int) (355), (int) (30));
+    textRenderer.endRendering();
+    // Texto
+    TextRenderer textRenderer2 = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
+    textRenderer2.beginRendering(900, 700);
+    textRenderer2.draw("Pontos : " + pontos, (int) (730), (int) (50));
+    textRenderer2.endRendering();
+
     
-    //gl.glMatrixMode(GL.GL_MODELVIEW);
-    //gl.glLoadIdentity();
-    //glu.gluLookAt(40, 60, 100,
-    //              0, 0, 0,
-    //              0, 1, 0);
-    //glu.gluPerspective(45, 1, -5, 100);
     
     gl.glMatrixMode(GL.GL_PROJECTION);
     gl.glLoadIdentity();
@@ -152,9 +192,6 @@ static drawingTranslations[] dTranslation = {
     gl.glLoadIdentity();
     glu.gluLookAt(4,6,10, 0,0,0, 0,1,0);
     
-    // Base translation of cube
-    //gl.glTranslatef(0,0,-50);
-    
     // Base rotation of cube
     gl.glRotatef(xAng, 1, 0, 0);
     gl.glRotatef(yAng, 0, 1, 0);
@@ -162,29 +199,28 @@ static drawingTranslations[] dTranslation = {
     for (int i = 0; i < 27; i++)
     {
         gl.glTranslatef(dTranslation[i].x, dTranslation[i].y,dTranslation[i].z);
-        // Six faces of cube2
         // Top face  
         gl.glPushMatrix();
         gl.glRotatef(-90, 1, 0, 0);
-        drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "Top");
+        drawFace(gl, 1.0f, 0.2f, 0.2f, 0.8f, "DBlue");
         gl.glPopMatrix();
         // Front face
-        drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Front");
+        drawFace(gl, 1.0f, 0.8f, 0.2f, 0.2f, "Red");
         // Right face
         gl.glPushMatrix();
         gl.glRotatef(90, 0, 1, 0);
-        drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Right");
+        drawFace(gl, 1.0f, 0.2f, 0.8f, 0.2f, "Green");
         // Back face    
         gl.glRotatef(90, 0, 1, 0);
-        drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Back");
+        drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Yellow");
         // Left face    
         gl.glRotatef(90, 0, 1, 0);
-        drawFace(gl, 1.0f, 0.2f, 0.8f, 0.8f, "Left");
+        drawFace(gl, 1.0f, 1.0f, 1.0f, 1.0f, "White");
         gl.glPopMatrix();
         // Bottom face
         gl.glPushMatrix();
         gl.glRotatef(90, 1, 0, 0);
-        drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Bottom");
+        drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Pink");
         gl.glPopMatrix();
     }
     
@@ -197,9 +233,6 @@ static drawingTranslations[] dTranslation = {
     }
     pickPoint.x = (int)MouseInfo.getPointerInfo().getLocation().getX();
     pickPoint.y = (int)MouseInfo.getPointerInfo().getLocation().getY();  
-    time.update();
-   // xAng += 50 * (float) time.deltaT();
-   // yAng += 40 * (float) time.deltaT();
   }
 
   public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -255,7 +288,19 @@ static drawingTranslations[] dTranslation = {
     }
 
     public void keyPressed(KeyEvent e) {
-    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         if(e.getKeyCode() == 49) // 1
+            pontos += 1;
+         if(e.getKeyCode() == 50) // 2
+            pontos += 1;
+         if(e.getKeyCode() == 51) // 3
+            pontos += 1;
+         if(e.getKeyCode() == 52) // 4
+            pontos += 1;
+         if(e.getKeyCode() == 53) // 5
+            pontos += 1;
+         if(e.getKeyCode() == 54) // 6
+            pontos += 1;
+             
     }
 
     public void keyReleased(KeyEvent e) {
