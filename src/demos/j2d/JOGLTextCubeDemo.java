@@ -27,7 +27,7 @@ import javax.swing.JFrame;
 import sun.audio.AudioStream;
 import sun.audio.*;
 import java.io.*;
-
+import javax.swing.Timer;
 /** Shows how to place 2D text in 3D using the TextRenderer. */
 
 
@@ -41,10 +41,15 @@ public class JOGLTextCubeDemo extends JFrame implements GLEventListener, KeyList
   private float textScaleFactor;
   private Point pickPoint = new Point();
   private boolean mousePressed = false;
-  private int pontos;
-  private int level = 1;
+  static private int pontos;
   Random rand = new Random();
-  private int[] seq = new int[100];
+  private static int[] seq = new int[100];
+  private static int state = 0; //0 = inicio; 1 =sequenciacomp; 2 = resposta usuario; 3=score+fim de jogo
+  private static boolean aceso = false; //dificuldade atual
+  private static int level = 1;  //fase atual, quantos vai acender no total
+  private static int indice = 0;//indice de quem vai ser o proximo a ser aceso
+  private static int colorToShine = 0;
+  
   
 public static class drawingTranslations
   {
@@ -96,6 +101,8 @@ static drawingTranslations[] dTranslation = {
   public static drawingTranslations [] dTranslations;
   public static String gongFile;
   public static AudioStream audioStream;
+  public static Timer genius;
+  public static Timer userTimer;
   
   public static void main(String[] args) throws Exception{
     Frame frame = new Frame("Text Cube");
@@ -107,9 +114,75 @@ static drawingTranslations[] dTranslation = {
     canvas.addGLEventListener(demo);
     frame.add(canvas, BorderLayout.CENTER);
     canvas.addKeyListener(demo);
-    canvas.addMouseListener(demo);
-
+    
+    canvas.addMouseListener(demo);    
+    
+    ActionListener iteracaoComp = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                aceso = !aceso;
+                if (aceso) //é para acender
+                {
+                    //baixar e dar play na musica
+                    colorToShine = seq[indice];                    
+                }
+                else
+                {
+                    System.out.println(seq[indice]);
+                    colorToShine = 0;                                        
+                    indice++;
+                    System.out.println(indice+" "+level);
+                    
+                    if (indice >= level)
+                    {
+                        System.out.println("entrei vacilao");
+                        state = 2;
+                        indice = 0; //indice passa a ser do usuário
+                        genius.stop();
+                    }
+                    
+                }
+            }
+        };
+    
+    genius = new Timer(1000, iteracaoComp);
+    userTimer = new Timer(1000, new ActionListener(){
+        public void actionPerformed(ActionEvent evt)
+        {
+            if (colorToShine == seq[indice])
+            {
+                pontos+=10;
+                indice++;
+                if (indice >= level)
+                {
+                    indice = 0;
+                    level++;
+                    state = 1;
+                    genius.start();
+                }
+            }
+            else
+            {
+                state = 3; //game over!!!
+            }            
+            colorToShine = 0;
+            userTimer.stop();
+        }
+    });
+    
+    
+    
     frame.setSize(1024, 1024);
+    
+    
+    
+    
+//    genius.scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() 
+//            {
+//                if (state == 0 || state == 3)
+//            }
+//    }, 4*60*5, 4*60*5);
     
     gongFile = "vitao.wav";
     // create an audiostream from the inputstream
@@ -153,11 +226,10 @@ static drawingTranslations[] dTranslation = {
     
     // Gerando sequencia de jogo
     seq[0] = 0;
-    if(level < 100){
-        seq[level] = rand.nextInt(7 - 0 + 1) + 0; 
-        level += 1;
+    for(indice = 0; indice < 100; indice++){
+        seq[indice] = rand.nextInt(7) + 1;
     }
-    level = 0;
+    indice = 0;
   }
 
   public void display(GLAutoDrawable drawable){
@@ -219,39 +291,40 @@ static drawingTranslations[] dTranslation = {
 
     for (int i = 0; i < 27; i++)
     {
+        //if (colorToShine!=0)
+            //System.out.println(colorToShine);
         gl.glTranslatef(dTranslation[i].x, dTranslation[i].y,dTranslation[i].z);
         // Top face  
         gl.glPushMatrix();
         gl.glRotatef(-90, 1, 0, 0);
-        if(seq[level] == 3)
+        if(colorToShine == 3)
         {
-            drawFace(gl, 1.0f, 0.2f, 0.2f, 1.0f, "DBlue");           
-            
+            drawFace(gl, 1.0f, 0.2f, 0.2f, 1.0f, "DBlue");      
         }
         else
             drawFace(gl, 1.0f, 0.4f, 0.4f, 0.8f, "DBlue");
         gl.glPopMatrix();
         // Front face
-        if(seq[level] == 2)
+        if(colorToShine == 2)
             drawFace(gl, 1.0f, 1.0f, 0.2f, 0.2f, "Red");
         else
             drawFace(gl, 1.0f, 0.8f, 0.4f, 0.4f, "Red");
         // Right face
         gl.glPushMatrix();
         gl.glRotatef(90, 0, 1, 0);
-        if(seq[level] == 4)
+        if(colorToShine == 4)
             drawFace(gl, 1.0f, 0.2f, 1.0f, 0.2f, "Green");
         else
             drawFace(gl, 1.0f, 0.4f, 0.7f, 0.4f, "Green");
         // Back face    
         gl.glRotatef(90, 0, 1, 0);
-        if(seq[level] == 1)
+        if(colorToShine == 1)
             drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Yellow");
         else
             drawFace(gl, 1.0f, 0.7f, 0.7f, 0.4f, "Yellow");
         // Left face    
         gl.glRotatef(90, 0, 1, 0);
-        if(seq[level] == 6)
+        if(colorToShine == 6)
             drawFace(gl, 1.0f, 1.0f, 1.0f, 1.0f, "White");
         else
             drawFace(gl, 1.0f, 0.65f, 0.65f, 0.65f,"White");
@@ -259,7 +332,7 @@ static drawingTranslations[] dTranslation = {
         // Bottom face
         gl.glPushMatrix();
         gl.glRotatef(90, 1, 0, 0);
-        if(seq[level] == 5)
+        if(colorToShine == 5)
             drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Pink");  
         else
             drawFace(gl, 1.0f, 0.8f, 0.5f, 0.8f, "Pink");
@@ -328,21 +401,28 @@ static drawingTranslations[] dTranslation = {
   public void keyTyped(KeyEvent e) {
     //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+  
 
     public void keyPressed(KeyEvent e) {
-         if(e.getKeyCode() == 49) // 1
-            pontos += 1;
-         if(e.getKeyCode() == 50) // 2
-            pontos += 1;
-         if(e.getKeyCode() == 51) // 3
-            pontos += 1;
-         if(e.getKeyCode() == 52) // 4
-            pontos += 1;
-         if(e.getKeyCode() == 53) // 5
-            pontos += 1;
-         if(e.getKeyCode() == 54) // 6
-            pontos += 1;
-             
+        if (state == 2)
+        {
+            colorToShine = e.getKeyCode()-48; //pega a cor
+            if (colorToShine < 0 || colorToShine > 7)
+            {
+                colorToShine = 0;
+            }
+            else
+            {
+                System.out.println(colorToShine+"FOI O USUÁRIO");
+                userTimer.start();
+            }
+        }
+         if (e.getKeyCode() == 80 && state == 0)
+         {
+             System.out.println("começou!");
+             state = 1;
+             genius.start();
+         }   
     }
 
     public void keyReleased(KeyEvent e) {
