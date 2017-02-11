@@ -99,7 +99,7 @@ static drawingTranslations[] dTranslation = {
 
   
   public static drawingTranslations [] dTranslations;
-  public static String gongFile;
+  public static String[] gongFile = new String[6];
   public static AudioStream audioStream;
   public static Timer genius;
   public static Timer userTimer;
@@ -123,7 +123,13 @@ static drawingTranslations[] dTranslation = {
                 if (aceso) //é para acender
                 {
                     //baixar e dar play na musica
-                    colorToShine = seq[indice];                    
+                    colorToShine = seq[indice];
+                try{
+                    audioStream = new AudioStream(new FileInputStream(gongFile[colorToShine-1]));
+                    AudioPlayer.player.start(audioStream);
+                }
+                catch(Exception ex)
+                {}                    
                 }
                 else
                 {
@@ -184,7 +190,12 @@ static drawingTranslations[] dTranslation = {
 //            }
 //    }, 4*60*5, 4*60*5);
     
-    gongFile = "vitao.wav";
+    gongFile[0] = "sounds\\01.wav";
+    gongFile[1] = "sounds\\02.wav";
+    gongFile[2] = "sounds\\03.wav";
+    gongFile[3] = "sounds\\04.wav";
+    gongFile[4] = "sounds\\05.wav";
+    gongFile[5] = "sounds\\06.wav";
     // create an audiostream from the inputstream
 
     // play the audio clip with the audioplayer class
@@ -227,7 +238,7 @@ static drawingTranslations[] dTranslation = {
     // Gerando sequencia de jogo
     seq[0] = 0;
     for(indice = 0; indice < 100; indice++){
-        seq[indice] = rand.nextInt(7) + 1;
+        seq[indice] = rand.nextInt(6) + 1;
     }
     indice = 0;
   }
@@ -306,26 +317,34 @@ static drawingTranslations[] dTranslation = {
         gl.glPopMatrix();
         // Front face
         if(colorToShine == 2)
+        {   
             drawFace(gl, 1.0f, 1.0f, 0.2f, 0.2f, "Red");
+        }
         else
             drawFace(gl, 1.0f, 0.8f, 0.4f, 0.4f, "Red");
         // Right face
         gl.glPushMatrix();
         gl.glRotatef(90, 0, 1, 0);
         if(colorToShine == 4)
+        {
             drawFace(gl, 1.0f, 0.2f, 1.0f, 0.2f, "Green");
+        }
         else
             drawFace(gl, 1.0f, 0.4f, 0.7f, 0.4f, "Green");
         // Back face    
         gl.glRotatef(90, 0, 1, 0);
         if(colorToShine == 1)
+        {
             drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Yellow");
+        }
         else
             drawFace(gl, 1.0f, 0.7f, 0.7f, 0.4f, "Yellow");
         // Left face    
         gl.glRotatef(90, 0, 1, 0);
         if(colorToShine == 6)
+        {
             drawFace(gl, 1.0f, 1.0f, 1.0f, 1.0f, "White");
+        }
         else
             drawFace(gl, 1.0f, 0.65f, 0.65f, 0.65f,"White");
         gl.glPopMatrix();
@@ -333,7 +352,9 @@ static drawingTranslations[] dTranslation = {
         gl.glPushMatrix();
         gl.glRotatef(90, 1, 0, 0);
         if(colorToShine == 5)
+        {    
             drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Pink");  
+        }
         else
             drawFace(gl, 1.0f, 0.8f, 0.5f, 0.8f, "Pink");
         gl.glPopMatrix();
@@ -413,6 +434,12 @@ static drawingTranslations[] dTranslation = {
             }
             else
             {
+                try{
+                    audioStream = new AudioStream(new FileInputStream(gongFile[colorToShine-1]));
+                    AudioPlayer.player.start(audioStream);
+                }
+                catch(Exception ex)
+                {}  
                 System.out.println(colorToShine+"FOI O USUÁRIO");
                 userTimer.start();
             }
@@ -434,12 +461,6 @@ static drawingTranslations[] dTranslation = {
     }
 
     public void mousePressed(MouseEvent mouse){
-        try{
-            audioStream = new AudioStream(new FileInputStream(gongFile));
-            AudioPlayer.player.start(audioStream);
-        }
-        catch(Exception ex)
-        {}
         mousePressed = true;        
     }
     
