@@ -177,7 +177,7 @@ static drawingTranslations[] dTranslation = {
     
     
     
-    frame.setSize(1024, 1024);
+    frame.setSize(800, 800);
     
     
     
@@ -283,9 +283,12 @@ static drawingTranslations[] dTranslation = {
         textRenderer.draw("6", (int) (355), (int) (30));
         // Instrucoes
         textRenderer.draw("Instruções:", (int) (30), (int) (620));
-        textRenderer.draw("Pressione a tecla 'P' para iniciar o jogo", (int) (30), (int) (600));
-        textRenderer.draw("Use os numeros de 1-6 no teclado para", (int) (30), (int) (580));
-        textRenderer.draw("selecionar as cores, siga a sequencia do cubo.", (int) (30), (int) (560));
+        textRenderer.draw("-> Pressione a tecla 'P' para iniciar o jogo", (int) (30), (int) (600));
+        textRenderer.draw("-> Use os numeros de 1-6 no teclado para", (int) (30), (int) (580));
+        textRenderer.draw("     selecionar as cores, siga a sequencia do cubo.", (int) (30), (int) (560));
+        textRenderer.draw("-> Clique e arraste para movimentar o cubo e",(int)(30), (int)(540));
+        textRenderer.draw("     enchergar as demais faces.", (int) (30), (int)(520));
+        
         textRenderer.endRendering();
         // Texto
         TextRenderer textRenderer2 = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
