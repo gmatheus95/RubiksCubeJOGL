@@ -246,47 +246,54 @@ static drawingTranslations[] dTranslation = {
   public void display(GLAutoDrawable drawable){
     GL gl = drawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        
-    // Texto
-    TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 15));
-    textRenderer.beginRendering(900, 700);
-    // AMARELO
-    textRenderer.setColor(Color.YELLOW);
-    textRenderer.setSmoothing(true);
-    textRenderer.draw("Amarelo", (int) (30), (int) (50));
-    textRenderer.draw("1", (int) (65), (int) (30));
-    // Vermelho
-    textRenderer.setColor(Color.RED);
-    textRenderer.setSmoothing(true);
-    textRenderer.draw("Vermelho", (int) (105), (int) (50));
-    textRenderer.draw("2", (int) (145), (int) (30));
-    // Azul
-    textRenderer.setColor(Color.BLUE);
-    textRenderer.setSmoothing(true);
-    textRenderer.draw("Azul", (int) (190), (int) (50));
-    textRenderer.draw("3", (int) (205), (int) (30));
-    // Verde
-    textRenderer.setColor(Color.GREEN);
-    textRenderer.setSmoothing(true);
-    textRenderer.draw("Verde", (int) (235), (int) (50));
-    textRenderer.draw("4", (int) (255), (int) (30));
-    // Rosa
-    textRenderer.setColor(Color.PINK);
-    textRenderer.setSmoothing(true);
-    textRenderer.draw("Rosa", (int) (290), (int) (50));
-    textRenderer.draw("5", (int) (308), (int) (30));
-    // LBLUE
-    textRenderer.setColor(Color.WHITE);
-    textRenderer.setSmoothing(true);
-    textRenderer.draw("Branco", (int) (340), (int) (50));
-    textRenderer.draw("6", (int) (355), (int) (30));
-    textRenderer.endRendering();
-    // Texto
-    TextRenderer textRenderer2 = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
-    textRenderer2.beginRendering(900, 700);
-    textRenderer2.draw("Pontos : " + pontos, (int) (730), (int) (50));
-    textRenderer2.endRendering();
-
+    
+    if(state != 3){
+        // Texto
+        TextRenderer textRenderer = new TextRenderer(new Font("Verdana", Font.BOLD, 15));
+        textRenderer.beginRendering(900, 700);
+        // AMARELO
+        textRenderer.setColor(Color.YELLOW);
+        textRenderer.setSmoothing(true);
+        textRenderer.draw("Amarelo", (int) (30), (int) (50));
+        textRenderer.draw("1", (int) (65), (int) (30));
+        // Vermelho
+        textRenderer.setColor(Color.RED);
+        textRenderer.setSmoothing(true);
+        textRenderer.draw("Vermelho", (int) (105), (int) (50));
+        textRenderer.draw("2", (int) (145), (int) (30));
+        // Azul
+        textRenderer.setColor(Color.BLUE);
+        textRenderer.setSmoothing(true);
+        textRenderer.draw("Azul", (int) (190), (int) (50));
+        textRenderer.draw("3", (int) (205), (int) (30));
+        // Verde
+        textRenderer.setColor(Color.GREEN);
+        textRenderer.setSmoothing(true);
+        textRenderer.draw("Verde", (int) (235), (int) (50));
+        textRenderer.draw("4", (int) (255), (int) (30));
+        // Rosa
+        textRenderer.setColor(Color.PINK);
+        textRenderer.setSmoothing(true);
+        textRenderer.draw("Rosa", (int) (290), (int) (50));
+        textRenderer.draw("5", (int) (308), (int) (30));
+        // WHITE
+        textRenderer.setColor(Color.WHITE);
+        textRenderer.setSmoothing(true);
+        textRenderer.draw("Branco", (int) (340), (int) (50));
+        textRenderer.draw("6", (int) (355), (int) (30));
+        // Instrucoes
+        textRenderer.draw("Instruções:", (int) (30), (int) (620));
+        textRenderer.draw("Pressione a tecla 'P' para iniciar o jogo", (int) (30), (int) (600));
+        textRenderer.draw("Use os numeros de 1-6 no teclado para", (int) (30), (int) (580));
+        textRenderer.draw("selecionar as cores, siga a sequencia do cubo.", (int) (30), (int) (560));
+        textRenderer.endRendering();
+        // Texto
+        TextRenderer textRenderer2 = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
+        textRenderer2.beginRendering(900, 700);
+        textRenderer2.draw("Pontos : " + pontos, (int) (730), (int) (50));
+        textRenderer2.draw("GENIUS", (int) (30), (int) (650));
+        textRenderer2.endRendering();
+    }
     
     
     gl.glMatrixMode(GL.GL_PROJECTION);
@@ -302,62 +309,73 @@ static drawingTranslations[] dTranslation = {
 
     for (int i = 0; i < 27; i++)
     {
-        //if (colorToShine!=0)
-            //System.out.println(colorToShine);
-        gl.glTranslatef(dTranslation[i].x, dTranslation[i].y,dTranslation[i].z);
-        // Top face  
-        gl.glPushMatrix();
-        gl.glRotatef(-90, 1, 0, 0);
-        if(colorToShine == 3)
+        if(state != 3){
+            gl.glTranslatef(dTranslation[i].x, dTranslation[i].y,dTranslation[i].z);
+            // Top face  
+            gl.glPushMatrix();
+            gl.glRotatef(-90, 1, 0, 0);
+            if(colorToShine == 3)
+            {
+                drawFace(gl, 1.0f, 0.2f, 0.2f, 1.0f, "DBlue");      
+            }
+            else
+                drawFace(gl, 1.0f, 0.4f, 0.4f, 0.8f, "DBlue");
+            gl.glPopMatrix();
+            // Front face
+            if(colorToShine == 2)
+            {   
+                drawFace(gl, 1.0f, 1.0f, 0.2f, 0.2f, "Red");
+            }
+            else
+                drawFace(gl, 1.0f, 0.8f, 0.4f, 0.4f, "Red");
+            // Right face
+            gl.glPushMatrix();
+            gl.glRotatef(90, 0, 1, 0);
+            if(colorToShine == 4)
+            {
+                drawFace(gl, 1.0f, 0.2f, 1.0f, 0.2f, "Green");
+            }
+            else
+                drawFace(gl, 1.0f, 0.4f, 0.7f, 0.4f, "Green");
+            // Back face    
+            gl.glRotatef(90, 0, 1, 0);
+            if(colorToShine == 1)
+            {
+                drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Yellow");
+            }
+            else
+                drawFace(gl, 1.0f, 0.7f, 0.7f, 0.4f, "Yellow");
+            // Left face    
+            gl.glRotatef(90, 0, 1, 0);
+            if(colorToShine == 6)
+            {
+                drawFace(gl, 1.0f, 1.0f, 1.0f, 1.0f, "White");
+            }
+            else
+                drawFace(gl, 1.0f, 0.65f, 0.65f, 0.65f,"White");
+            gl.glPopMatrix();
+            // Bottom face
+            gl.glPushMatrix();
+            gl.glRotatef(90, 1, 0, 0);
+            if(colorToShine == 5)
+            {    
+                drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Pink");  
+            }
+            else
+                drawFace(gl, 1.0f, 0.8f, 0.5f, 0.8f, "Pink");
+            gl.glPopMatrix();
+        }
+        else
         {
-            drawFace(gl, 1.0f, 0.2f, 0.2f, 1.0f, "DBlue");      
+            TextRenderer textRenderer3 = new TextRenderer(new Font("Verdana", Font.BOLD, 20));
+            textRenderer3.beginRendering(900, 700);
+            // AMARELO
+            textRenderer3.setColor(Color.WHITE);
+            textRenderer3.setSmoothing(true);
+            textRenderer3.draw("GAME OVER", (int) (400), (int) (500));
+            textRenderer3.draw("Pontos : " +pontos, (int) (400), (int) (450));
+            textRenderer3.endRendering();
         }
-        else
-            drawFace(gl, 1.0f, 0.4f, 0.4f, 0.8f, "DBlue");
-        gl.glPopMatrix();
-        // Front face
-        if(colorToShine == 2)
-        {   
-            drawFace(gl, 1.0f, 1.0f, 0.2f, 0.2f, "Red");
-        }
-        else
-            drawFace(gl, 1.0f, 0.8f, 0.4f, 0.4f, "Red");
-        // Right face
-        gl.glPushMatrix();
-        gl.glRotatef(90, 0, 1, 0);
-        if(colorToShine == 4)
-        {
-            drawFace(gl, 1.0f, 0.2f, 1.0f, 0.2f, "Green");
-        }
-        else
-            drawFace(gl, 1.0f, 0.4f, 0.7f, 0.4f, "Green");
-        // Back face    
-        gl.glRotatef(90, 0, 1, 0);
-        if(colorToShine == 1)
-        {
-            drawFace(gl, 1.0f, 0.8f, 0.8f, 0.2f, "Yellow");
-        }
-        else
-            drawFace(gl, 1.0f, 0.7f, 0.7f, 0.4f, "Yellow");
-        // Left face    
-        gl.glRotatef(90, 0, 1, 0);
-        if(colorToShine == 6)
-        {
-            drawFace(gl, 1.0f, 1.0f, 1.0f, 1.0f, "White");
-        }
-        else
-            drawFace(gl, 1.0f, 0.65f, 0.65f, 0.65f,"White");
-        gl.glPopMatrix();
-        // Bottom face
-        gl.glPushMatrix();
-        gl.glRotatef(90, 1, 0, 0);
-        if(colorToShine == 5)
-        {    
-            drawFace(gl, 1.0f, 0.8f, 0.2f, 0.8f, "Pink");  
-        }
-        else
-            drawFace(gl, 1.0f, 0.8f, 0.5f, 0.8f, "Pink");
-        gl.glPopMatrix();
     }
     
     fps.draw();
