@@ -31,7 +31,7 @@ import javax.swing.Timer;
 /** Shows how to place 2D text in 3D using the TextRenderer. */
 
 
-public class JOGLTextCubeDemo extends JFrame implements GLEventListener, KeyListener, MouseListener {
+public class RubiksCubeGenius extends JFrame implements GLEventListener, KeyListener, MouseListener {
   private float xAng;
   private float yAng;
   private GLU glu = new GLU();
@@ -105,11 +105,11 @@ static drawingTranslations[] dTranslation = {
   public static Timer userTimer;
   
   public static void main(String[] args) throws Exception{
-    Frame frame = new Frame("Text Cube");
+    Frame frame = new Frame("Rubik's Cube Genius");
     frame.setLayout(new BorderLayout());
 
     GLCanvas canvas = new GLCanvas();
-    final JOGLTextCubeDemo demo = new JOGLTextCubeDemo();
+    final RubiksCubeGenius demo = new RubiksCubeGenius();
 
     canvas.addGLEventListener(demo);
     frame.add(canvas, BorderLayout.CENTER);
@@ -293,8 +293,8 @@ static drawingTranslations[] dTranslation = {
         // Texto
         TextRenderer textRenderer2 = new TextRenderer(new Font("Verdana", Font.BOLD, 25));
         textRenderer2.beginRendering(900, 700);
-        textRenderer2.draw("Pontos : " + pontos, (int) (730), (int) (50));
-        textRenderer2.draw("GENIUS", (int) (30), (int) (650));
+        textRenderer2.draw("Pontos : " + pontos, (int) (700), (int) (50));
+        textRenderer2.draw("Rubik's Cube GENIUS", (int) (30), (int) (650));
         textRenderer2.endRendering();
     }
     
